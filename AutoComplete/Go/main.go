@@ -26,7 +26,7 @@ type MyHandler struct {
 	Db        *ledis.DB         `json:"Db"`
 	Conf      Config            `json:"Conf"`
 	DDoS      utils.DDoS        `json:"DDoS"`
-	Filtros   map[uint32][]byte `json:"Filtros"`
+	Auto      map[string][]byte `json:"Auto"`
 	CountMem  uint32            `json:"CountMem"`
 	CountDisk uint32            `json:"CountDisk"`
 }
@@ -34,19 +34,25 @@ type MyHandler struct {
 func main() {
 
 	var port string
+	var dbname string
 	if runtime.GOOS == "windows" {
-		port = ":81"
+		port = ":82"
+		dbname = "C:/Go/LedisDB/Auto"
 	} else {
-		port = ":8080"
+		port = ":8082"
+		dbname = "/var/Go/LedisDB/Auto"
 	}
 
 	pass := &MyHandler{
-		DDoS:    utils.DDoS{Start: true, Ips: &utils.IPs{Ip: make(map[uint32]uint8, 0)}, BlackList: make([]uint32, 0)},
-		Filtros: make(map[uint32][]byte, 0),
-		Db:      LedisConfig(1),
+		DDoS: utils.DDoS{Start: true, Ips: &utils.IPs{Ip: make(map[uint32]uint8, 0)}, BlackList: make([]uint32, 0)},
+		Auto: make(map[string][]byte, 0),
+		Db:   LedisConfig(dbname),
 	}
 
-	pass.DDoS.BlackList = append(pass.DDoS.BlackList, 825307441)
+	pass.Auto["a"] = []byte{200, 255, 150, 160, 170, 180, 190, 100, 112, 113, 165, 176, 184, 129, 201, 203, 120, 255, 150, 160, 170, 180, 190, 100, 112, 113, 165, 176, 184, 129, 201, 203, 120, 255, 150, 160, 170, 180, 190, 100, 112, 113, 165, 176, 184, 129, 201, 203, 120, 255, 150, 160, 170, 180, 190, 100, 112, 113, 165, 176, 184, 129, 201, 203, 120}
+
+	//pass.DDoS.BlackList = append(pass.DDoS.BlackList, 825307441)
+	//pass.DDoS.BlackList = append(pass.DDoS.BlackList, 825307442)
 
 	con := context.Background()
 	con, cancel := context.WithCancel(con)
@@ -83,14 +89,63 @@ func main() {
 }
 func (h *MyHandler) HandleFastHTTP(ctx *fasthttp.RequestCtx) {
 
-	ctx.Response.Header.Set("Content-Type", "application/octet-stream")
+	//ctx.Response.Header.Set("Content-Type", "application/octet-stream")
 
 	if string(ctx.Method()) == "GET" {
 		switch string(ctx.Path()) {
-		case "/":
+		case "/a":
 
 			if !h.DDoS.Start || utils.VerificarIp(&h.DDoS, utils.Ip_str_u32(ctx.RemoteAddr().String())) {
 
+				var search []byte = ctx.QueryArgs().Peek("s")
+				var cuad []byte = ctx.QueryArgs().Peek("c")
+
+				if Auto, Found := h.Auto[string(search)]; Found {
+					h.CountMem++
+					ctx.SetBody(Auto)
+				} else {
+					h.CountDisk++
+					key1 := utils.KeySearch(search)
+					val1, _ := h.Db.Get(key1)
+					if len(val1) > 0 {
+						ctx.SetBody(val1)
+					} else {
+						key2 := utils.KeySearchCuad(search, cuad)
+						val2, _ := h.Db.Get(key2)
+						if len(val2) > 0 {
+							ctx.SetBody(val2)
+						}
+					}
+				}
+
+			} else {
+				Send(utils.SendParamPostJson(), []byte{})
+				ctx.SetBody([]byte{})
+			}
+
+		case "/al":
+
+			ctx.SetBody([]byte{49, 50})
+			ctx.SetBody([]byte{51, 52})
+
+			/*
+				if leng == 0 {
+
+				} else if leng < lensearch {
+
+					for i := 0; i < leng; i++ {
+
+					}
+
+				} else {
+					// WAF
+				}
+			*/
+
+			//fmt.Println("LENG:", leng)
+			//fmt.Println("SEARCH:", lensearch)
+			//fmt.Println("LEN BYTES:", ctx.QueryArgs().Peek("len"))
+			/*
 				id := utils.ParamUint32(ctx.QueryArgs().Peek("i"))
 				if Filtro, Found := h.Filtros[id]; Found {
 					h.CountMem++
@@ -102,11 +157,7 @@ func (h *MyHandler) HandleFastHTTP(ctx *fasthttp.RequestCtx) {
 						ctx.SetBody(val)
 					}
 				}
-
-			} else {
-				Send(utils.SendParamPostJson(), []byte{49})
-				ctx.SetBody([]byte{})
-			}
+			*/
 
 		case "/bl":
 
@@ -127,8 +178,7 @@ func (h *MyHandler) HandleFastHTTP(ctx *fasthttp.RequestCtx) {
 // DAEMON //
 func (h *MyHandler) StartDaemon() {
 	h.Conf.Tiempo = 10 * time.Second
-	fmt.Println(utils.PrintMemUsage())
-	fmt.Println(utils.GetMonitoringsCpu())
+	fmt.Println("DAEMON")
 }
 func (c *Config) init() {
 	var tick = flag.Duration("tick", 1*time.Second, "Ticking interval")
@@ -150,26 +200,26 @@ func run(con context.Context, c *MyHandler, stdout io.Writer) error {
 // DDoS //
 func Send(ops utils.SendData, data []byte) []byte {
 
-	uri := fmt.Sprintf("%v:%v", ops.Host, ops.Port)
+	uri := fmt.Sprintf("%v:%v%v", ops.Host, ops.Port, ops.Uri)
 
 	req := fasthttp.AcquireRequest()
 	req.SetBody(data)
 	req.Header.SetMethod(ops.Method)
-	req.Header.SetContentType("application/json")
+	req.Header.SetContentType(ops.ContentType)
 	req.SetRequestURI(uri)
 	res := fasthttp.AcquireResponse()
 	if err := fasthttp.Do(req, res); err != nil {
-		panic("handle error")
+		fmt.Println(err)
+		return []byte{}
 	}
 	fasthttp.ReleaseRequest(req)
 	body := res.Body()
 	fasthttp.ReleaseResponse(res)
 	return body
 }
-func LedisConfig(path int) *ledis.DB {
+func LedisConfig(path string) *ledis.DB {
 	cfg := lediscfg.NewConfigDefault()
-	cfg.DataDir = "C:/Go/LedisDB/Init"
-	//cfg.DataDir = fmt.Sprintf("/var/Go/LedisDB/filtro/%v", path)
+	cfg.DataDir = path
 	l, _ := ledis.Open(cfg)
 	db, _ := l.Select(0)
 	return db
