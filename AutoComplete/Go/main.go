@@ -52,7 +52,7 @@ func main() {
 	v1 := make([][]byte, 0)
 	v1 = [][]byte{[]byte{97}, []byte{98}, []byte{99}, []byte{100}, []byte{101}, []byte{102}, []byte{103}, []byte{104}, []byte{105}, []byte{106}, []byte{107}, []byte{108}, []byte{109}, []byte{110}, []byte{195, 177}, []byte{111}, []byte{112}, []byte{113}, []byte{114}, []byte{115}, []byte{116}, []byte{117}, []byte{118}, []byte{119}, []byte{120}, []byte{121}, []byte{122}}
 
-	var z1, z2, z3 int = 0, 0, 0
+	var z1, z2, z3, z4 int = 0, 0, 0, 0
 	by := []byte{97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 195, 177, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 114, 115, 116, 117, 118, 119, 120, 121, 122, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 114, 115, 116, 117, 118, 119, 120, 121, 122, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 114, 115, 116, 117, 118, 119, 120, 121, 122, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57}
 
 	for i := 0; i < len(v1); i++ {
@@ -79,7 +79,21 @@ func main() {
 		}
 	}
 
-	fmt.Println(z1, z2, z3)
+	for i := 0; i < len(v1); i++ {
+		for j := 0; j < len(v1); j++ {
+			key := append(v1[i], v1[j]...)
+			for k := 0; k < len(v1); k++ {
+				key = append(key, v1[k]...)
+				for z := 0; z < len(v1); z++ {
+					key = append(key, v1[z]...)
+					pass.Auto[string(key)] = by
+					z4++
+				}
+			}
+		}
+	}
+
+	fmt.Println(z1, z2, z3, z4)
 
 	//pass.DDoS.BlackList = append(pass.DDoS.BlackList, 825307441)
 	//pass.DDoS.BlackList = append(pass.DDoS.BlackList, 825307442)
