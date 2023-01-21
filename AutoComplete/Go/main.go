@@ -51,9 +51,6 @@ func main() {
 
 	pass.SaveMemoryDb()
 
-	//pass.DDoS.BlackList = append(pass.DDoS.BlackList, 825307441)
-	//pass.DDoS.BlackList = append(pass.DDoS.BlackList, 825307442)
-
 	con := context.Background()
 	con, cancel := context.WithCancel(con)
 	signalChan := make(chan os.Signal, 1)
@@ -89,7 +86,7 @@ func main() {
 }
 func (h *MyHandler) HandleFastHTTP(ctx *fasthttp.RequestCtx) {
 
-	//ctx.Response.Header.Set("Content-Type", "application/octet-stream")
+	ctx.Response.Header.Set("Content-Type", "application/octet-stream")
 
 	if string(ctx.Method()) == "GET" {
 		switch string(ctx.Path()) {
@@ -102,6 +99,7 @@ func (h *MyHandler) HandleFastHTTP(ctx *fasthttp.RequestCtx) {
 
 				if Auto, Found := h.Auto[string(search)]; Found {
 					h.CountMem++
+					fmt.Println("FOUND")
 					ctx.SetBody(Auto)
 				} else {
 					h.CountDisk++
@@ -119,46 +117,9 @@ func (h *MyHandler) HandleFastHTTP(ctx *fasthttp.RequestCtx) {
 				}
 
 			} else {
-				Send(utils.SendParamPostJson(), []byte{})
-				ctx.SetBody([]byte{})
+				//Send(utils.SendParamPostJson(), []byte{})
+				ctx.SetBody([]byte{49})
 			}
-
-		case "/al":
-
-			ctx.SetBody([]byte{49, 50})
-			ctx.SetBody([]byte{51, 52})
-
-			/*
-				if leng == 0 {
-
-				} else if leng < lensearch {
-
-					for i := 0; i < leng; i++ {
-
-					}
-
-				} else {
-					// WAF
-				}
-			*/
-
-			//fmt.Println("LENG:", leng)
-			//fmt.Println("SEARCH:", lensearch)
-			//fmt.Println("LEN BYTES:", ctx.QueryArgs().Peek("len"))
-			/*
-				id := utils.ParamUint32(ctx.QueryArgs().Peek("i"))
-				if Filtro, Found := h.Filtros[id]; Found {
-					h.CountMem++
-					ctx.SetBody(Filtro)
-				} else {
-					h.CountDisk++
-					val, _ := h.Db.Get(utils.Int32_by(id))
-					if len(val) > 0 {
-						ctx.SetBody(val)
-					}
-				}
-			*/
-
 		case "/bl":
 
 			var i int = 0
@@ -168,7 +129,6 @@ func (h *MyHandler) HandleFastHTTP(ctx *fasthttp.RequestCtx) {
 			}
 			h.DDoS.BlackList = make([]uint32, 0)
 			ctx.SetBody(resp)
-
 		default:
 			ctx.Error("Not Found", fasthttp.StatusNotFound)
 		}
