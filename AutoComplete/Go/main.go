@@ -97,7 +97,7 @@ func (h *MyHandler) HandleFastHTTP(ctx *fasthttp.RequestCtx) {
 				var search []byte = ctx.QueryArgs().Peek("s")
 				var cuad []byte = ctx.QueryArgs().Peek("c")
 
-				//fmt.Println("SEARCH:", search)
+				fmt.Println("SEARCH:", search)
 
 				if Auto, Found := h.Auto[string(search)]; Found {
 					h.CountMem++
@@ -201,45 +201,65 @@ func (h *MyHandler) SaveMemoryDb() {
 
 	var z1, z2, z3, z4 int = 0, 0, 0, 0
 
-	for i := 0; i < len(v1); i++ {
-		h.Auto[string(v1[i])] = GetBytes(236)
-		z1++
+	for x := uint8(0); x <= 255; x++ {
+		for i := 0; i < len(v1); i++ {
+			h.Auto[b2(x, v1[i][0])] = GetBytes(236)
+			z1++
+		}
 	}
 	fmt.Println("Nivel1:", z1)
 
-	for i := 0; i < len(v1); i++ {
-		for j := 0; j < len(v1); j++ {
-			key := append(v1[i], v1[j]...)
-			h.Auto[string(key)] = GetBytes(236)
-			z2++
+	for x := uint8(0); x <= 255; x++ {
+		for i := 0; i < len(v1); i++ {
+			for j := 0; j < len(v1); j++ {
+				h.Auto[b3(x, v1[i][0], v1[j][0])] = GetBytes(236)
+				z2++
+			}
 		}
 	}
 	fmt.Println("Nivel2:", z2)
 
-	for i := 0; i < len(v1); i++ {
-		for j := 0; j < len(v1); j++ {
-			key1 := append(v1[i], v1[j]...)
-			for k := 0; k < len(v1); k++ {
-				key := append(key1, v1[k]...)
-				h.Auto[string(key)] = GetBytes(236)
-				z3++
+	for x := uint8(0); x <= 255; x++ {
+		for i := 0; i < len(v1); i++ {
+			for j := 0; j < len(v1); j++ {
+				for k := 0; k < len(v1); k++ {
+					h.Auto[b4(x, v1[i][0], v1[j][0], v1[k][0])] = GetBytes(236)
+					z3++
+				}
 			}
 		}
 	}
 	fmt.Println("Nivel3:", z3)
 
-	for i := 0; i < len(v1); i++ {
-		for j := 0; j < len(v1); j++ {
-			key1 := append(v1[i], v1[j]...)
-			for k := 0; k < len(v1); k++ {
-				key2 := append(key1, v1[k]...)
-				for z := 0; z < len(v1); z++ {
-					key := append(key2, v1[z]...)
-					h.Auto[string(key)] = GetBytes(236)
-					z4++
-				}
-			}
-		}
-	}
-	fmt.Println("Nivel4:", z4)
+}
+
+func b2(b1 byte, b2 byte) string {
+	b := make([]byte, 2)
+	b[0] = b1
+	b[1] = b2
+	return string(b)
+}
+func b3(b1 byte, b2 byte, b3 byte) string {
+	b := make([]byte, 3)
+	b[0] = b1
+	b[1] = b2
+	b[2] = b3
+	return string(b)
+}
+func b4(b1 byte, b2 byte, b3 byte, b4 byte) string {
+	b := make([]byte, 4)
+	b[0] = b1
+	b[1] = b2
+	b[2] = b3
+	b[3] = b4
+	return string(b)
+}
+func b5(b1 byte, b2 byte, b3 byte, b4 byte, b5 byte) string {
+	b := make([]byte, 5)
+	b[0] = b1
+	b[1] = b2
+	b[2] = b3
+	b[3] = b4
+	b[4] = b4
+	return string(b)
 }
