@@ -106,8 +106,10 @@ func (h *MyHandler) HandleFastHTTP(ctx *fasthttp.RequestCtx) {
 
 				if Auto, Found := h.Auto[string(key)]; Found {
 					h.CountMem++
+					fmt.Println("FOUND")
 					ctx.SetBody(Auto)
 				} else {
+					fmt.Println("NOT FOUND")
 					h.CountDisk++
 					key1 := utils.KeySearch(search)
 					val1, _ := h.Db.Get(key1)
