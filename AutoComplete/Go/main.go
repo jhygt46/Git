@@ -97,14 +97,12 @@ func (h *MyHandler) HandleFastHTTP(ctx *fasthttp.RequestCtx) {
 				var search []byte = ctx.QueryArgs().Peek("s")
 				var cuad []byte = ctx.QueryArgs().Peek("c")
 
-				fmt.Println("SEARCH:", search)
+				//fmt.Println("SEARCH:", search)
 
 				if Auto, Found := h.Auto[string(search)]; Found {
 					h.CountMem++
-					fmt.Println("FOUND")
 					ctx.SetBody(Auto)
 				} else {
-					fmt.Println("NOT FOUND")
 					h.CountDisk++
 					key1 := utils.KeySearch(search)
 					val1, _ := h.Db.Get(key1)
