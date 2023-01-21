@@ -97,13 +97,12 @@ func (h *MyHandler) HandleFastHTTP(ctx *fasthttp.RequestCtx) {
 
 				var search []byte = ctx.QueryArgs().Peek("s")
 				var cuad []byte = ctx.QueryArgs().Peek("c")
-				var pais []byte = ctx.QueryArgs().Peek("p")
 
 				key := make([]byte, len(search)+1)
-				key[0] = pais[0]
+				key[0] = 49
 				copy(key[1:], search)
 
-				fmt.Println(pais, search, key, string(key))
+				fmt.Println(49, search, key, string(key))
 
 				if Auto, Found := h.Auto[string(key)]; Found {
 					h.CountMem++
