@@ -86,7 +86,8 @@ func main() {
 }
 func (h *MyHandler) HandleFastHTTP(ctx *fasthttp.RequestCtx) {
 
-	ctx.Response.Header.Set("Content-Type", "application/octet-stream")
+	//ctx.Response.Header.Set("Content-Type", "application/octet-stream")
+	ctx.Response.Header.Set("Content-Type", "application/json")
 
 	if string(ctx.Method()) == "GET" {
 		switch string(ctx.Path()) {
