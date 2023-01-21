@@ -96,13 +96,14 @@ func (h *MyHandler) HandleFastHTTP(ctx *fasthttp.RequestCtx) {
 			if !h.DDoS.Start || utils.VerificarIp(&h.DDoS, utils.Ip_str_u32(ctx.RemoteAddr().String())) {
 
 				var search []byte = ctx.QueryArgs().Peek("s")
+				var pais []byte = ctx.QueryArgs().Peek("p")
 				var cuad []byte = ctx.QueryArgs().Peek("c")
 
 				key := make([]byte, len(search)+1)
-				key[0] = 49
+				key[0] = uint8('c' - pais[0])
 				copy(key[1:], search)
 
-				fmt.Println(49, search, key, string(key))
+				fmt.Println(search, key, string(key))
 
 				if Auto, Found := h.Auto[string(key)]; Found {
 					h.CountMem++
