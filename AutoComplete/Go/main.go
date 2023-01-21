@@ -224,6 +224,7 @@ func (h *MyHandler) SaveMemoryDb() {
 			for k := 0; k < len(v1); k++ {
 				key = append(key, v1[k]...)
 				h.Auto[string(key)] = GetBytes(236)
+				fmt.Println(string(key))
 				z3++
 			}
 		}
