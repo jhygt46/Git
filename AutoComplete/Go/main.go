@@ -220,9 +220,9 @@ func (h *MyHandler) SaveMemoryDb() {
 
 	for i := 0; i < len(v1); i++ {
 		for j := 0; j < len(v1); j++ {
-			key := append(v1[i], v1[j]...)
+			key1 := append(v1[i], v1[j]...)
 			for k := 0; k < len(v1); k++ {
-				key = append(key, v1[k]...)
+				key := append(key1, v1[k]...)
 				h.Auto[string(key)] = GetBytes(236)
 				fmt.Println(string(key))
 				z3++
