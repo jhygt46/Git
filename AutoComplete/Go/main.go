@@ -204,7 +204,7 @@ func (h *MyHandler) SaveMemoryDb() {
 	fmt.Println(len(v1))
 
 	var z1 int = 0
-	for x := 0; x <= 100; x++ {
+	for x := 0; x <= 60; x++ {
 		for i := 0; i < len(v1); i++ {
 			h.Auto[b2(uint8(x), v1[i][0])] = GetBytes(236)
 			z1++
@@ -213,7 +213,7 @@ func (h *MyHandler) SaveMemoryDb() {
 	fmt.Println("Nivel1:", z1)
 
 	var z2 int = 0
-	for x := 0; x <= 100; x++ {
+	for x := 0; x <= 60; x++ {
 		for i := 0; i < len(v1); i++ {
 			for j := 0; j < len(v1); j++ {
 				h.Auto[b3(uint8(x), v1[i][0], v1[j][0])] = GetBytes(236)
@@ -224,7 +224,7 @@ func (h *MyHandler) SaveMemoryDb() {
 	fmt.Println("Nivel2:", z2)
 
 	var z3 int = 0
-	for x := 0; x <= 100; x++ {
+	for x := 0; x <= 60; x++ {
 		for i := 0; i < len(v1); i++ {
 			for j := 0; j < len(v1); j++ {
 				for k := 0; k < len(v1); k++ {
