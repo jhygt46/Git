@@ -102,6 +102,8 @@ func (h *MyHandler) HandleFastHTTP(ctx *fasthttp.RequestCtx) {
 				key[0] = pais[0]
 				copy(key[1:], search)
 
+				fmt.Println(pais, search, key, string(key))
+
 				if Auto, Found := h.Auto[string(key)]; Found {
 					h.CountMem++
 					ctx.SetBody(Auto)
