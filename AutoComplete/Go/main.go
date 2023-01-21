@@ -96,10 +96,13 @@ func (h *MyHandler) HandleFastHTTP(ctx *fasthttp.RequestCtx) {
 
 				var search []byte = ctx.QueryArgs().Peek("s")
 				var cuad []byte = ctx.QueryArgs().Peek("c")
+				var pais []byte = ctx.QueryArgs().Peek("p")
 
-				fmt.Println("SEARCH:", search)
+				key := make([]byte, len(search)+1)
+				key[0] = pais[0]
+				copy(key[1:], search)
 
-				if Auto, Found := h.Auto[string(search)]; Found {
+				if Auto, Found := h.Auto[string(key)]; Found {
 					h.CountMem++
 					ctx.SetBody(Auto)
 				} else {
@@ -198,32 +201,34 @@ func (h *MyHandler) SaveMemoryDb() {
 
 	v1 := make([][]byte, 0)
 	v1 = [][]byte{[]byte{97}, []byte{98}, []byte{99}, []byte{100}, []byte{101}, []byte{102}, []byte{103}, []byte{104}, []byte{105}, []byte{106}, []byte{107}, []byte{108}, []byte{109}, []byte{110}, []byte{195, 177}, []byte{111}, []byte{112}, []byte{113}, []byte{114}, []byte{115}, []byte{116}, []byte{117}, []byte{118}, []byte{119}, []byte{120}, []byte{121}, []byte{122}}
+	fmt.Println(len(v1))
 
-	var z1, z2, z3 int = 0, 0, 0
-
-	for x := uint8(0); x <= 255; x++ {
+	var z1 int = 0
+	for x := 0; x <= 255; x++ {
 		for i := 0; i < len(v1); i++ {
-			h.Auto[b2(x, v1[i][0])] = GetBytes(236)
+			h.Auto[b2(uint8(x), v1[i][0])] = GetBytes(236)
 			z1++
 		}
 	}
 	fmt.Println("Nivel1:", z1)
 
-	for x := uint8(0); x <= 255; x++ {
+	var z2 int = 0
+	for x := 0; x <= 255; x++ {
 		for i := 0; i < len(v1); i++ {
 			for j := 0; j < len(v1); j++ {
-				h.Auto[b3(x, v1[i][0], v1[j][0])] = GetBytes(236)
+				h.Auto[b3(uint8(x), v1[i][0], v1[j][0])] = GetBytes(236)
 				z2++
 			}
 		}
 	}
 	fmt.Println("Nivel2:", z2)
 
-	for x := uint8(0); x <= 255; x++ {
+	var z3 int = 0
+	for x := 0; x <= 255; x++ {
 		for i := 0; i < len(v1); i++ {
 			for j := 0; j < len(v1); j++ {
 				for k := 0; k < len(v1); k++ {
-					h.Auto[b4(x, v1[i][0], v1[j][0], v1[k][0])] = GetBytes(236)
+					h.Auto[b4(uint8(x), v1[i][0], v1[j][0], v1[k][0])] = GetBytes(236)
 					z3++
 				}
 			}
