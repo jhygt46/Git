@@ -199,7 +199,7 @@ func (h *MyHandler) SaveMemoryDb() {
 	v1 := make([][]byte, 0)
 	v1 = [][]byte{[]byte{97}, []byte{98}, []byte{99}, []byte{100}, []byte{101}, []byte{102}, []byte{103}, []byte{104}, []byte{105}, []byte{106}, []byte{107}, []byte{108}, []byte{109}, []byte{110}, []byte{195, 177}, []byte{111}, []byte{112}, []byte{113}, []byte{114}, []byte{115}, []byte{116}, []byte{117}, []byte{118}, []byte{119}, []byte{120}, []byte{121}, []byte{122}}
 
-	var z1, z2, z3, z4 int = 0, 0, 0, 0
+	var z1, z2, z3 int = 0, 0, 0
 
 	for x := uint8(0); x <= 255; x++ {
 		for i := 0; i < len(v1); i++ {
