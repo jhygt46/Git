@@ -23,12 +23,16 @@ type Config struct {
 	Tiempo time.Duration `json:"Tiempo"`
 }
 type MyHandler struct {
-	Db        *ledis.DB         `json:"Db"`
-	Conf      Config            `json:"Conf"`
-	DDoS      utils.DDoS        `json:"DDoS"`
-	Auto      map[string][]byte `json:"Auto"`
-	CountMem  uint32            `json:"CountMem"`
-	CountDisk uint32            `json:"CountDisk"`
+	Db        *ledis.DB      `json:"Db"`
+	Conf      Config         `json:"Conf"`
+	DDoS      utils.DDoS     `json:"DDoS"`
+	Auto      map[uint8]Auto `json:"Auto"`
+	CountMem  uint32         `json:"CountMem"`
+	CountDisk uint32         `json:"CountDisk"`
+}
+
+type Auto struct {
+	Auto map[string][]byte `json:"Auto"`
 }
 
 func main() {
@@ -45,7 +49,7 @@ func main() {
 
 	pass := &MyHandler{
 		DDoS: utils.DDoS{Start: false, Ips: &utils.IPs{Ip: make(map[uint32]uint8, 0)}, BlackList: make([]uint32, 0)},
-		Auto: make(map[string][]byte, 0),
+		Auto: make(map[uint8]Auto, 0),
 		Db:   LedisConfig(dbname),
 	}
 
@@ -96,33 +100,19 @@ func (h *MyHandler) HandleFastHTTP(ctx *fasthttp.RequestCtx) {
 			if !h.DDoS.Start || utils.VerificarIp(&h.DDoS, utils.Ip_str_u32(ctx.RemoteAddr().String())) {
 
 				var search []byte = ctx.QueryArgs().Peek("s")
+				pais := utils.ParamUint8(ctx.QueryArgs().Peek("p"))
 
-				key := make([]byte, len(search)+1)
-				key[0] = utils.ParamUint8(ctx.QueryArgs().Peek("p"))
-				copy(key[1:], search)
+				if Auto, Found := h.Auto[pais]; Found {
 
-				fmt.Println(key, string(key))
+					if Auto2, Found2 := Auto.Auto[string(search)]; Found2 {
+						h.CountMem++
+						ctx.SetBody(Auto2)
+					} else {
+						fmt.Println("NOT FOUND 1")
+					}
 
-				if Auto, Found := h.Auto[string(key)]; Found {
-					h.CountMem++
-					fmt.Println("FOUND")
-					ctx.SetBody(Auto)
 				} else {
-					fmt.Println("NOT FOUND")
-					/*
-						h.CountDisk++
-						key1 := utils.KeySearch(search)
-						val1, _ := h.Db.Get(key1)
-						if len(val1) > 0 {
-							ctx.SetBody(val1)
-						} else {
-							key2 := utils.KeySearchCuad(search, cuad)
-							val2, _ := h.Db.Get(key2)
-							if len(val2) > 0 {
-								ctx.SetBody(val2)
-							}
-						}
-					*/
+					fmt.Println("NOT FOUND 2")
 				}
 
 			} else {
@@ -209,10 +199,14 @@ func (h *MyHandler) SaveMemoryDb() {
 	v1 = [][]byte{[]byte{97}, []byte{98}, []byte{99}, []byte{100}, []byte{101}, []byte{102}, []byte{103}, []byte{104}, []byte{105}, []byte{106}, []byte{107}, []byte{108}, []byte{109}, []byte{110}, []byte{195, 177}, []byte{111}, []byte{112}, []byte{113}, []byte{114}, []byte{115}, []byte{116}, []byte{117}, []byte{118}, []byte{119}, []byte{120}, []byte{121}, []byte{122}}
 	fmt.Println(len(v1))
 
+	for x := 0; x <= 60; x++ {
+		h.Auto[uint8(x)] = Auto{Auto: make(map[string][]byte, 0)}
+	}
+
 	var z1 int = 0
 	for x := 0; x <= 60; x++ {
 		for i := 0; i < len(v1); i++ {
-			h.Auto[b2(uint8(x), v1[i][0])] = GetBytes(236)
+			h.Auto[uint8(x)].Auto[string(v1[i][0])] = GetBytes(236)
 			z1++
 		}
 	}
@@ -222,7 +216,7 @@ func (h *MyHandler) SaveMemoryDb() {
 	for x := 0; x <= 60; x++ {
 		for i := 0; i < len(v1); i++ {
 			for j := 0; j < len(v1); j++ {
-				h.Auto[b3(uint8(x), v1[i][0], v1[j][0])] = GetBytes(236)
+				h.Auto[uint8(x)].Auto[b2(v1[i][0], v1[j][0])] = GetBytes(236)
 				z2++
 			}
 		}
@@ -234,7 +228,7 @@ func (h *MyHandler) SaveMemoryDb() {
 		for i := 0; i < len(v1); i++ {
 			for j := 0; j < len(v1); j++ {
 				for k := 0; k < len(v1); k++ {
-					h.Auto[b4(uint8(x), v1[i][0], v1[j][0], v1[k][0])] = GetBytes(236)
+					h.Auto[uint8(x)].Auto[b3(v1[i][0], v1[j][0], v1[k][0])] = GetBytes(236)
 					z3++
 				}
 			}
