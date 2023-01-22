@@ -40,10 +40,10 @@ func main() {
 	var port string
 	var dbname string
 	if runtime.GOOS == "windows" {
-		port = ":82"
+		port = ":83"
 		dbname = "C:/Go/LedisDB/Auto"
 	} else {
-		port = ":8082"
+		port = ":8083"
 		dbname = "/var/Go/LedisDB/Auto"
 	}
 
