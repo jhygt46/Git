@@ -101,11 +101,10 @@ func (h *MyHandler) HandleFastHTTP(ctx *fasthttp.RequestCtx) {
 				key[0] = utils.ParamUint8(ctx.QueryArgs().Peek("p"))
 				copy(key[1:], search)
 
-				fmt.Println(key, string(key))
+				//fmt.Println(key, string(key))
 
 				if Auto, Found := h.Auto[string(key)]; Found {
 					h.CountMem++
-					fmt.Println("FOUND")
 					ctx.SetBody(Auto)
 				} else {
 					fmt.Println("NOT FOUND")
