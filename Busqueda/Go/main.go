@@ -57,8 +57,7 @@ func main() {
 		Db:       LedisConfig(dbname),
 	}
 
-	pass.DDoS.BlackList = append(pass.DDoS.BlackList, 825307441)
-	pass.DDoS.BlackList = append(pass.DDoS.BlackList, 825307442)
+	pass.SaveMemoryDb()
 
 	con := context.Background()
 	con, cancel := context.WithCancel(con)
@@ -103,8 +102,6 @@ func (h *MyHandler) HandleFastHTTP(ctx *fasthttp.RequestCtx) {
 
 			if !h.DDoS.Start || utils.VerificarIp(&h.DDoS, utils.Ip_str_u32(ctx.RemoteAddr().String())) {
 
-				fmt.Println(ctx.QueryArgs().Peek("p"))
-
 				var pais uint8 = utils.ParamUint8(ctx.QueryArgs().Peek("p"))
 				if Busqueda, Found := h.Busqueda[pais]; Found {
 
@@ -117,7 +114,7 @@ func (h *MyHandler) HandleFastHTTP(ctx *fasthttp.RequestCtx) {
 
 					CkeckErr(err)
 
-					if Res, Found := Busqueda.Res[0]; Found {
+					if Res, Found := Busqueda.Res[5687]; Found {
 						CkeckRes(Res)
 					} else {
 
@@ -220,4 +217,61 @@ func CkeckErr(b bool) {
 }
 func CkeckRes(b []byte) {
 
+}
+
+// SAVE MEMORY
+func (h *MyHandler) SaveMemoryDb() {
+
+	for x := 0; x <= 60; x++ {
+		h.Busqueda[uint8(x)] = Busqueda{Res: make(map[uint64][]byte, 0)}
+	}
+
+	var z1 int = 0
+	for x := 0; x <= 60; x++ {
+		for i := 0; i < 10000; i++ {
+			h.Busqueda[uint8(x)].Res[uint64(i)] = GetBytes(450)
+			z1++
+		}
+	}
+	fmt.Println("Nivel1:", z1)
+
+}
+
+// TEST DELETE //
+func GetBytes(n int) []byte {
+	by := make([]byte, n)
+	for i := 0; i < n; i++ {
+		by[i] = 49
+	}
+	return by
+}
+func b2(b1 byte, b2 byte) string {
+	b := make([]byte, 2)
+	b[0] = b1
+	b[1] = b2
+	return string(b)
+}
+func b3(b1 byte, b2 byte, b3 byte) string {
+	b := make([]byte, 3)
+	b[0] = b1
+	b[1] = b2
+	b[2] = b3
+	return string(b)
+}
+func b4(b1 byte, b2 byte, b3 byte, b4 byte) string {
+	b := make([]byte, 4)
+	b[0] = b1
+	b[1] = b2
+	b[2] = b3
+	b[3] = b4
+	return string(b)
+}
+func b5(b1 byte, b2 byte, b3 byte, b4 byte, b5 byte) string {
+	b := make([]byte, 5)
+	b[0] = b1
+	b[1] = b2
+	b[2] = b3
+	b[3] = b4
+	b[4] = b4
+	return string(b)
 }
