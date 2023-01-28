@@ -11,6 +11,7 @@ import (
 	"runtime"
 	"syscall"
 	"time"
+	"unicode/utf8"
 	"utils/utils"
 
 	"github.com/valyala/fasthttp"
@@ -53,7 +54,7 @@ func main() {
 		Db:   LedisConfig(dbname),
 	}
 
-	pass.SaveMemoryDb()
+	//pass.SaveMemoryDb()
 
 	con := context.Background()
 	con, cancel := context.WithCancel(con)
@@ -96,42 +97,183 @@ func (h *MyHandler) HandleFastHTTP(ctx *fasthttp.RequestCtx) {
 	if string(ctx.Method()) == "GET" {
 		switch string(ctx.Path()) {
 		case "/a":
-
+			// SEARCH 1 CARACTER
 			if !h.DDoS.Start || utils.VerificarIp(&h.DDoS, utils.Ip_str_u32(ctx.RemoteAddr().String())) {
-
+				var pais uint8 = utils.ParamUint8(ctx.QueryArgs().Peek("p"))
 				var search []byte = ctx.QueryArgs().Peek("s")
-				pais := utils.ParamUint8(ctx.QueryArgs().Peek("p"))
-
 				if Auto, Found := h.Auto[pais]; Found {
-
 					if Auto2, Found2 := Auto.Auto[string(search)]; Found2 {
 						h.CountMem++
 						ctx.SetBody(Auto2)
 					} else {
-						fmt.Println("NOT FOUND 1")
+						val, _ := h.Db.Get(utils.KeySearch(search))
+						ctx.SetBody(val)
 					}
-
 				} else {
-					fmt.Println("NOT FOUND 2")
+					fmt.Println("PAIS NO ENCONTRADO")
+					ctx.SetBody([]byte{})
 				}
-
 			} else {
-				//Send(utils.SendParamPostJson(), []byte{})
-				fmt.Println("FUCK")
-				ctx.SetBody([]byte{49})
+				Send(utils.SendParamPostJson(), []byte{})
+				ctx.SetBody([]byte{})
 			}
-		case "/bl":
+		case "/al":
+			// SEARCH MAX 3 CARACTER
+			if !h.DDoS.Start || utils.VerificarIp(&h.DDoS, utils.Ip_str_u32(ctx.RemoteAddr().String())) {
+				var pais uint8 = utils.ParamUint8(ctx.QueryArgs().Peek("p"))
+				var search []byte = ctx.QueryArgs().Peek("s")
+				var leng int = utils.LengMax3(ctx.QueryArgs().Peek("l"))
+				if leng > 0 && len(search) > leng {
+					if Auto, Found := h.Auto[pais]; Found {
+						for i := 0; i < leng; i++ {
+							s := utils.Unicode(search, leng-i)
+							if Auto2, Found2 := Auto.Auto[string(s)]; Found2 {
+								ctx.Write(Auto2)
+							} else {
+								val, _ := h.Db.Get(utils.KeySearch(s))
+								ctx.Write(val)
+							}
+						}
+					} else {
+						fmt.Println("PAIS NO ENCONTRADO")
+						ctx.SetBody([]byte{})
+					}
+				} else {
+					// WAF
+				}
+			} else {
+				Send(utils.SendParamPostJson(), []byte{})
+				ctx.SetBody([]byte{})
+			}
+		case "/ac":
 
-			var i int = 0
-			resp := make([]byte, len(h.DDoS.BlackList)*4)
-			for _, ip := range h.DDoS.BlackList {
-				i += copy(resp[i:], utils.Int32_by_Min4(ip))
+		case "/bl":
+			ctx.SetBody(h.BlackList())
+		case "/unicode":
+
+			n0 := 0
+			n1 := 1114111
+
+			var min1ba uint8 = 255
+			var max1ba uint8 = 0
+
+			var min2ba uint8 = 255
+			var max2ba uint8 = 0
+			var min2bb uint8 = 255
+			var max2bb uint8 = 0
+
+			var min3ba uint8 = 255
+			var max3ba uint8 = 0
+			var min3bb uint8 = 255
+			var max3bb uint8 = 0
+			var min3bc uint8 = 255
+			var max3bc uint8 = 0
+
+			var min4ba uint8 = 255
+			var max4ba uint8 = 0
+			var min4bb uint8 = 255
+			var max4bb uint8 = 0
+			var min4bc uint8 = 255
+			var max4bc uint8 = 0
+			var min4bd uint8 = 255
+			var max4bd uint8 = 0
+
+			for i := n0; i < n1; i++ {
+				r := rune(int32(i))
+				buf := make([]byte, 4)
+				n := utf8.EncodeRune(buf, r)
+				if n == 1 {
+					if buf[0] < min1ba {
+						min1ba = buf[0]
+					}
+					if buf[0] > max1ba {
+						max1ba = buf[0]
+					}
+				}
+				if n == 2 {
+					if buf[0] < min2ba {
+						min2ba = buf[0]
+					}
+					if buf[0] > max2ba {
+						max2ba = buf[0]
+					}
+					if buf[1] < min2bb {
+						min2bb = buf[1]
+					}
+					if buf[1] > max2bb {
+						max2bb = buf[1]
+					}
+				}
+				if n == 3 {
+					if buf[0] < min3ba {
+						min3ba = buf[0]
+					}
+					if buf[0] > max3ba {
+						max3ba = buf[0]
+					}
+					if buf[1] < min3bb {
+						min3bb = buf[1]
+					}
+					if buf[1] > max3bb {
+						max3bb = buf[1]
+					}
+					if buf[2] < min3bc {
+						min3bc = buf[2]
+					}
+					if buf[2] > max3bc {
+						max3bc = buf[2]
+					}
+				}
+				if n == 4 {
+					if buf[0] < min4ba {
+						min4ba = buf[0]
+					}
+					if buf[0] > max4ba {
+						max4ba = buf[0]
+					}
+					if buf[1] < min4bb {
+						min4bb = buf[1]
+					}
+					if buf[1] > max4bb {
+						max4bb = buf[1]
+					}
+					if buf[2] < min4bc {
+						min4bc = buf[2]
+					}
+					if buf[2] > max4bc {
+						max4bc = buf[2]
+					}
+					if buf[3] < min4bd {
+						min4bd = buf[3]
+					}
+					if buf[3] > max4bd {
+						max4bd = buf[3]
+					}
+				}
 			}
-			h.DDoS.BlackList = make([]uint32, 0)
-			ctx.SetBody(resp)
+			fmt.Fprintf(ctx, "1 Byte MinA(%v) - MaxA(%v)\n", min1ba, max1ba)
+			fmt.Fprintf(ctx, "2 Byte MinA(%v) - MaxA(%v) / MinB(%v) - MaxB(%v)\n", min2ba, max2ba, min2bb, max2bb)
+			fmt.Fprintf(ctx, "3 Byte MinA(%v) - MaxA(%v) / MinB(%v) - MaxB(%v) / MinC(%v) - MaxC(%v)\n", min3ba, max3ba, min3bb, max3bb, min3bc, max3bc)
+			fmt.Fprintf(ctx, "4 Byte MinA(%v) - MaxA(%v) / MinB(%v) - MaxB(%v) / MinC(%v) - MaxC(%v) / MinD(%v) - MaxD(%v)\n", min4ba, max4ba, min4bb, max4bb, min4bc, max4bc, min4bd, max4bd)
 		default:
 			ctx.Error("Not Found", fasthttp.StatusNotFound)
 		}
+	}
+}
+
+func (h *MyHandler) BlackList() []byte {
+
+	len := len(h.DDoS.BlackList)
+	if len > 0 {
+		var i int = 0
+		resp := make([]byte, len*4)
+		for _, ip := range h.DDoS.BlackList {
+			i += copy(resp[i:], utils.Int32_by_Min4(ip))
+		}
+		h.DDoS.BlackList = make([]uint32, 0)
+		return resp
+	} else {
+		return []byte{}
 	}
 }
 
@@ -185,14 +327,7 @@ func LedisConfig(path string) *ledis.DB {
 	return db
 }
 
-// TEST DELETE //
-func GetBytes(n int) []byte {
-	by := make([]byte, n)
-	for i := 0; i < n; i++ {
-		by[i] = 49
-	}
-	return by
-}
+// SAVE MEMORY
 func (h *MyHandler) SaveMemoryDb() {
 
 	v1 := make([][]byte, 0)
@@ -206,8 +341,10 @@ func (h *MyHandler) SaveMemoryDb() {
 	var z1 int = 0
 	for x := 0; x <= 60; x++ {
 		for i := 0; i < len(v1); i++ {
-			h.Auto[uint8(x)].Auto[string(v1[i][0])] = GetBytes(236)
-			z1++
+			for j := 0; j < len(v1); j++ {
+				h.Auto[uint8(x)].Auto[b2(v1[i][0], v1[j][0])] = GetBytes(450)
+				z1++
+			}
 		}
 	}
 	fmt.Println("Nivel1:", z1)
@@ -216,28 +353,24 @@ func (h *MyHandler) SaveMemoryDb() {
 	for x := 0; x <= 60; x++ {
 		for i := 0; i < len(v1); i++ {
 			for j := 0; j < len(v1); j++ {
-				h.Auto[uint8(x)].Auto[b2(v1[i][0], v1[j][0])] = GetBytes(236)
-				z2++
-			}
-		}
-	}
-	fmt.Println("Nivel2:", z2)
-
-	var z3 int = 0
-	for x := 0; x <= 60; x++ {
-		for i := 0; i < len(v1); i++ {
-			for j := 0; j < len(v1); j++ {
 				for k := 0; k < len(v1); k++ {
-					h.Auto[uint8(x)].Auto[b3(v1[i][0], v1[j][0], v1[k][0])] = GetBytes(236)
-					z3++
+					h.Auto[uint8(x)].Auto[b3(v1[i][0], v1[j][0], v1[k][0])] = GetBytes(450)
+					z2++
 				}
 			}
 		}
 	}
-	fmt.Println("Nivel3:", z3)
-
+	fmt.Println("Nivel2:", z2)
 }
 
+// TEST DELETE //
+func GetBytes(n int) []byte {
+	by := make([]byte, n)
+	for i := 0; i < n; i++ {
+		by[i] = 49
+	}
+	return by
+}
 func b2(b1 byte, b2 byte) string {
 	b := make([]byte, 2)
 	b[0] = b1
