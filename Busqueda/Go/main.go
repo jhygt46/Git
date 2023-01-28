@@ -85,7 +85,8 @@ func main() {
 		}
 	}()
 	go func() {
-		fasthttp.ListenAndServe(port, pass.HandleFastHTTP)
+		s := &fasthttp.Server{Handler: pass.HandleFastHTTP, NoDefaultServerHeader: false}
+		s.ListenAndServe(port)
 	}()
 	if err := run(con, pass, os.Stdout); err != nil {
 		fmt.Fprintf(os.Stderr, "%s\n", err)
@@ -115,7 +116,7 @@ func (h *MyHandler) HandleFastHTTP(ctx *fasthttp.RequestCtx) {
 					CkeckErr(err)
 
 					if Res, Found := Busqueda.Res[5687]; Found {
-						CkeckRes(Res)
+						ctx.SetBody(Res)
 					} else {
 
 					}
