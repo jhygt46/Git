@@ -4,6 +4,15 @@ import (
 	"testing"
 )
 
+type ResEmp struct {
+	Id         int     `json:"Id"`
+	Nombre     []byte  `json:"Nombre"` // Nombre
+	Lat        float64 `json:"Lat"`    // Lat
+	Lng        float64 `json:"Lng"`    // Lng
+	TotalBytes int     `json:"TotalBytes"`
+	Unique     uint8   `json:"Unique"`
+}
+
 func Benchmark_GETIP(b *testing.B) {
 	var by string = "127.0.0.1:7653"
 	for m := 0; m < b.N; m++ {
