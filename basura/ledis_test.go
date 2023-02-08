@@ -40,6 +40,84 @@ func Benchmark_ParamAlphaLat2(b *testing.B) {
 		ParamAlphaLat2(by)
 	}
 }
+func Benchmark_Repeat(b *testing.B) {
+	var Emps []ResEmp = make([]ResEmp, 20)
+	Emps[0] = ResEmp{Id: 70001, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[1] = ResEmp{Id: 70002, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[2] = ResEmp{Id: 70003, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[3] = ResEmp{Id: 70004, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[4] = ResEmp{Id: 70005, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[5] = ResEmp{Id: 70006, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[6] = ResEmp{Id: 70007, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[7] = ResEmp{Id: 70008, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[8] = ResEmp{Id: 70009, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[9] = ResEmp{Id: 70010, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[10] = ResEmp{Id: 70011, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[11] = ResEmp{Id: 70012, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[12] = ResEmp{Id: 70013, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[13] = ResEmp{Id: 70014, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[14] = ResEmp{Id: 70015, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[15] = ResEmp{Id: 70016, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[16] = ResEmp{Id: 70017, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[17] = ResEmp{Id: 70018, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[18] = ResEmp{Id: 70019, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[19] = ResEmp{Id: 70020, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	for m := 0; m < b.N; m++ {
+		Repeat(Emps)
+	}
+}
+func Benchmark_Repeat2(b *testing.B) {
+	var Emps []ResEmp = make([]ResEmp, 20)
+	Emps[0] = ResEmp{Id: 70001, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[1] = ResEmp{Id: 70002, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[2] = ResEmp{Id: 70003, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[3] = ResEmp{Id: 70004, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[4] = ResEmp{Id: 70005, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[5] = ResEmp{Id: 70006, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[6] = ResEmp{Id: 70007, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[7] = ResEmp{Id: 70008, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[8] = ResEmp{Id: 70009, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[9] = ResEmp{Id: 70010, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[10] = ResEmp{Id: 70011, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[11] = ResEmp{Id: 70012, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[12] = ResEmp{Id: 70013, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[13] = ResEmp{Id: 70014, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[14] = ResEmp{Id: 70015, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[15] = ResEmp{Id: 70016, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[16] = ResEmp{Id: 70017, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[17] = ResEmp{Id: 70018, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[18] = ResEmp{Id: 70019, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[19] = ResEmp{Id: 70020, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	for m := 0; m < b.N; m++ {
+		Repeat2(Emps)
+	}
+}
+func Benchmark_Repeat3(b *testing.B) {
+	var Emps []ResEmp = make([]ResEmp, 20)
+	Emps[0] = ResEmp{Id: 70001, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[1] = ResEmp{Id: 70002, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[2] = ResEmp{Id: 70003, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[3] = ResEmp{Id: 70004, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[4] = ResEmp{Id: 70005, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[5] = ResEmp{Id: 70006, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[6] = ResEmp{Id: 70007, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[7] = ResEmp{Id: 70008, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[8] = ResEmp{Id: 70009, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[9] = ResEmp{Id: 70010, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[10] = ResEmp{Id: 70011, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[11] = ResEmp{Id: 70012, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[12] = ResEmp{Id: 70013, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[13] = ResEmp{Id: 70014, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[14] = ResEmp{Id: 70015, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[15] = ResEmp{Id: 70016, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[16] = ResEmp{Id: 70017, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[17] = ResEmp{Id: 70018, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[18] = ResEmp{Id: 70019, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	Emps[19] = ResEmp{Id: 70020, Nombre: []byte{65, 65, 65, 66, 67, 68}, Lat: 231.3444, Lng: 150.3324, TotalBytes: 345}
+	for m := 0; m < b.N; m++ {
+		Repeat3(Emps)
+	}
+}
 
 func GetIp(ip string) uint32 {
 	var b uint32
@@ -190,4 +268,58 @@ func ParamAlphaLat(b []byte) (float64, bool) {
 		pon = pon * 62
 	}
 	return (res - 1800000000) / 10000000, true
+}
+func Repeat(Emps []ResEmp) {
+	res := make(map[int]ResEmp)
+	for _, emp := range Emps {
+		if _, Found := res[emp.Id]; !Found {
+			res[emp.Id] = emp
+		}
+	}
+}
+func Repeat2(Emps []ResEmp) {
+
+	var j, i int = 0, 1
+	var leng = len(Emps)
+	for {
+		if Emps[j].Id == Emps[i].Id {
+			Emps[i].Unique = 1
+		}
+		i++
+		if leng <= i {
+			j++
+			i = j + 1
+		}
+		if leng == j {
+			break
+		}
+		if leng == i {
+			break
+		}
+	}
+}
+func Repeat3(Emps []ResEmp) {
+
+	var arrInt []int = make([]int, len(Emps))
+	var arrInt2 []int = make([]int, len(Emps))
+	var insert bool
+	var count int = 0
+	var TotalBytes = 0
+	for x, emp := range Emps {
+		insert = true
+		for _, v := range arrInt {
+			if emp.Id == v {
+				insert = false
+			}
+			if emp.Id == 0 {
+				break
+			}
+		}
+		if insert {
+			arrInt[count] = emp.Id
+			arrInt2[count] = x
+			count++
+			TotalBytes += emp.TotalBytes
+		}
+	}
 }
