@@ -335,7 +335,7 @@ func Repeat3(Emps []ResEmp) {
 		}
 	}
 }
-func Repeat4(Emps [][]int) [][]int {
+func Repeat4(Emps [][]int) {
 
 	var j, i int = 0, 1
 	var leng = len(Emps)
@@ -354,7 +354,6 @@ func Repeat4(Emps [][]int) [][]int {
 			break
 		}
 	}
-	return Emps
 }
 func remove(s [][]int, i int) [][]int {
 	s[i] = s[len(s)-1]
