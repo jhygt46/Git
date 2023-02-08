@@ -127,6 +127,12 @@ func Benchmark_Repeat3(b *testing.B) {
 		Repeat3(Emps)
 	}
 }
+func Benchmark_Repeat4(b *testing.B) {
+	x := [][]int{[]int{100, 0}, []int{101, 1}, []int{102, 2}, []int{103, 3}, []int{104, 4}, []int{105, 5}, []int{106, 6}, []int{107, 7}, []int{108, 8}, []int{109, 9}, []int{110, 10}, []int{111, 11}, []int{112, 12}, []int{113, 13}, []int{114, 14}, []int{115, 15}, []int{116, 16}, []int{117, 17}, []int{118, 18}, []int{119, 19}}
+	for m := 0; m < b.N; m++ {
+		Repeat4(x)
+	}
+}
 
 func GetIp(ip string) uint32 {
 	var b uint32
@@ -291,7 +297,7 @@ func Repeat2(Emps []ResEmp) {
 	var j, i int = 0, 1
 	var leng = len(Emps)
 	for {
-		if Emps[i].Unique == 0 && Emps[j].Id == Emps[i].Id {
+		if Emps[j].Id == Emps[i].Id {
 			Emps[i].Unique = 1
 		}
 		i++
@@ -328,4 +334,29 @@ func Repeat3(Emps []ResEmp) {
 			TotalBytes += emp.TotalBytes
 		}
 	}
+}
+func Repeat4(Emps [][]int) [][]int {
+
+	var j, i int = 0, 1
+	var leng = len(Emps)
+	for {
+		if Emps[j][0] == Emps[i][0] {
+			Emps = remove(Emps, i)
+			leng--
+		} else {
+			i++
+		}
+		if leng <= i {
+			j++
+			i = j + 1
+		}
+		if leng == j || leng == i {
+			break
+		}
+	}
+	return Emps
+}
+func remove(s [][]int, i int) [][]int {
+	s[i] = s[len(s)-1]
+	return s[:len(s)-1]
 }
