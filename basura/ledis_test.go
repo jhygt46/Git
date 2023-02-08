@@ -291,7 +291,7 @@ func Repeat2(Emps []ResEmp) {
 	var j, i int = 0, 1
 	var leng = len(Emps)
 	for {
-		if Emps[j].Id == Emps[i].Id {
+		if Emps[i].Unique == 0 && Emps[j].Id == Emps[i].Id {
 			Emps[i].Unique = 1
 		}
 		i++
