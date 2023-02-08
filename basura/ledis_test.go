@@ -299,10 +299,7 @@ func Repeat2(Emps []ResEmp) {
 			j++
 			i = j + 1
 		}
-		if leng == j {
-			break
-		}
-		if leng == i {
+		if leng == j || leng == i {
 			break
 		}
 	}
