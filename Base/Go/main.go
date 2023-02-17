@@ -49,7 +49,7 @@ func main() {
 		Db:      LedisConfig(dbname),
 	}
 
-	pass.Filtros[1] = RandBytes(1024)
+	pass.SaveDb()
 
 	pass.DDoS.BlackList = append(pass.DDoS.BlackList, 825307441)
 	pass.DDoS.BlackList = append(pass.DDoS.BlackList, 825307442)
@@ -86,6 +86,13 @@ func main() {
 		fmt.Fprintf(os.Stderr, "%s\n", err)
 		os.Exit(1)
 	}
+}
+func (h *MyHandler) SaveDb() {
+
+	for i := 0; i < 100000; i++ {
+		h.Filtros[uint32(i)] = RandBytes(1024)
+	}
+
 }
 func (h *MyHandler) HandleFastHTTP(ctx *fasthttp.RequestCtx) {
 
