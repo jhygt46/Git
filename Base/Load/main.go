@@ -1,11 +1,13 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"sync"
+	"time"
 )
 
 type RoundRobinBalancer struct {
@@ -22,12 +24,26 @@ func (r *RoundRobinBalancer) NextTarget() *url.URL {
 	return target
 }
 
+func timeoutMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx, cancel := context.WithTimeout(r.Context(), 30*time.Second)
+		defer cancel()
+
+		r = r.WithContext(ctx)
+		next.ServeHTTP(w, r)
+
+		if ctx.Err() == context.DeadlineExceeded {
+			http.Error(w, "Request timeout", http.StatusGatewayTimeout)
+		}
+	})
+}
+
 func main() {
 	// Crea un slice de URL de destino que se balancearán
 	targetUrls := []*url.URL{
+		{Scheme: "http", Host: "localhost:8080"},
 		{Scheme: "http", Host: "localhost:8081"},
 		{Scheme: "http", Host: "localhost:8082"},
-		{Scheme: "http", Host: "localhost:8083"},
 	}
 
 	// Crea un balanceador de carga Round Robin
@@ -48,9 +64,9 @@ func main() {
 	}
 
 	// Configura un servidor HTTP para escuchar y manejar solicitudes
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	http.Handle("/", timeoutMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		proxy.ServeHTTP(w, r)
-	})
-	fmt.Println("Listening on port 8888...")
+	})))
+	fmt.Println("Listening on port 8080...")
 	http.ListenAndServe(":8080", nil)
 }
