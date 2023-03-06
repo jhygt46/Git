@@ -1,72 +1,90 @@
 package main
 
 import (
-	"context"
 	"fmt"
+	"log"
+	"net"
 	"net/http"
-	"net/http/httputil"
 	"net/url"
-	"sync"
+	"sync/atomic"
 	"time"
+
+	"github.com/valyala/fasthttp"
 )
 
-type RoundRobinBalancer struct {
-	targets []*url.URL
-	current int
-	lock    sync.Mutex
-}
-
-func (r *RoundRobinBalancer) NextTarget() *url.URL {
-	r.lock.Lock()
-	defer r.lock.Unlock()
-	target := r.targets[r.current]
-	r.current = (r.current + 1) % len(r.targets)
-	return target
-}
-
-func timeoutMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx, cancel := context.WithTimeout(r.Context(), 30*time.Second)
-		defer cancel()
-
-		r = r.WithContext(ctx)
-		next.ServeHTTP(w, r)
-
-		if ctx.Err() == context.DeadlineExceeded {
-			http.Error(w, "Request timeout", http.StatusGatewayTimeout)
-		}
-	})
-}
-
 func main() {
-	// Crea un slice de URL de destino que se balancearán
-	targetUrls := []*url.URL{
-		{Scheme: "http", Host: "localhost:8080"},
-		{Scheme: "http", Host: "localhost:8081"},
-		{Scheme: "http", Host: "localhost:8082"},
-	}
-
-	// Crea un balanceador de carga Round Robin
-	balancer := &RoundRobinBalancer{
-		targets: targetUrls,
-		current: 0,
-	}
-	proxy := &httputil.ReverseProxy{
-		Director: func(req *http.Request) {
-			targetUrl := balancer.NextTarget()
-			req.URL.Scheme = targetUrl.Scheme
-			req.URL.Host = targetUrl.Host
+	// Define los servidores de destino
+	destinations := []*url.URL{
+		{
+			Scheme: "http",
+			Host:   "localhost:8081",
 		},
-		Transport: &http.Transport{
-			MaxIdleConns:        10,
-			MaxIdleConnsPerHost: 10,
+		{
+			Scheme: "http",
+			Host:   "localhost:8082",
+		},
+		{
+			Scheme: "http",
+			Host:   "localhost:8083",
 		},
 	}
 
-	// Configura un servidor HTTP para escuchar y manejar solicitudes
-	http.Handle("/", timeoutMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		proxy.ServeHTTP(w, r)
-	})))
-	fmt.Println("Listening on port 8080...")
-	http.ListenAndServe(":8080", nil)
+	// Crea el balanceador de carga
+	balancer := &roundRobinBalancer{
+		destinations: destinations,
+	}
+
+	// Crea un servidor Fasthttp que utilizará el balanceador de carga
+	server := &fasthttp.Server{
+		Handler: func(ctx *fasthttp.RequestCtx) {
+			balancer.proxyRequest(ctx)
+		},
+	}
+
+	// Inicia el servidor en el puerto 9090
+	if err := server.ListenAndServe(":9090"); err != nil {
+		log.Fatalf("Error al iniciar el servidor: %s", err)
+	}
+}
+
+// roundRobinBalancer es un balanceador de carga que utiliza el algoritmo Round Robin
+type roundRobinBalancer struct {
+	destinations []*url.URL
+	currentIndex uint32
+}
+
+// proxyRequest redirige una solicitud HTTP a uno de los servidores de destino utilizando el algoritmo Round Robin
+func (b *roundRobinBalancer) proxyRequest(ctx *fasthttp.RequestCtx) {
+	// Obtiene el índice del servidor de destino actual y lo incrementa para la próxima solicitud
+	index := int(atomic.AddUint32(&b.currentIndex, 1) % uint32(len(b.destinations)))
+
+	// Obtiene el servidor de destino actual
+	dest := b.destinations[index]
+
+	// Crea una nueva solicitud HTTP utilizando la URL del servidor de destino actual
+	req := &fasthttp.Request{}
+	req.SetRequestURI(dest.String())
+	req.Header.SetMethod(ctx.Method())
+	req.Header.SetContentType(ctx.Request.Header.ContentType())
+	req.Header.SetContentLength(ctx.Request.Header.ContentLength())
+	req.SetBody(ctx.Request.Body())
+
+	// Envía la solicitud HTTP al servidor de destino actual y devuelve la respuesta
+	resp := &fasthttp.Response{}
+	client := &fasthttp.Client{
+		Dial: (&net.Dialer{
+			Timeout:   5 * time.Second,
+			KeepAlive: 10 * time.Second,
+		}).Dial,
+	}
+
+	if err := client.Do(req, resp); err != nil {
+		ctx.SetStatusCode(http.StatusBadGateway)
+		fmt.Fprintf(ctx, "Error al procesar la solicitud: %s", err)
+		return
+	}
+
+	ctx.Response.Header.SetContentType(resp.Header.ContentType())
+	ctx.Response.Header.SetContentLength(resp.Header.ContentLength())
+	ctx.SetBody(resp.Body())
 }
