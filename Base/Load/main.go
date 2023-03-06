@@ -41,6 +41,10 @@ func main() {
 			req.URL.Scheme = targetUrl.Scheme
 			req.URL.Host = targetUrl.Host
 		},
+		Transport: &http.Transport{
+			MaxIdleConns:        10,
+			MaxIdleConnsPerHost: 10,
+		},
 	}
 
 	// Configura un servidor HTTP para escuchar y manejar solicitudes
