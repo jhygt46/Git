@@ -42,7 +42,7 @@ func main() {
 	}
 
 	// Inicia el servidor en el puerto 9090
-	if err := server.ListenAndServe(":9090"); err != nil {
+	if err := server.ListenAndServe(":8080"); err != nil {
 		log.Fatalf("Error al iniciar el servidor: %s", err)
 	}
 }
@@ -64,8 +64,8 @@ func (b *roundRobinBalancer) proxyRequest(ctx *fasthttp.RequestCtx) {
 	// Crea una nueva solicitud HTTP utilizando la URL del servidor de destino actual
 	req := &fasthttp.Request{}
 	req.SetRequestURI(dest.String())
-	req.Header.SetMethod(ctx.Method())
-	req.Header.SetContentType(ctx.Request.Header.ContentType())
+	req.Header.SetMethod("GET")
+	req.Header.SetContentType("application/json")
 	req.Header.SetContentLength(ctx.Request.Header.ContentLength())
 	req.SetBody(ctx.Request.Body())
 
